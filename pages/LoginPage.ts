@@ -6,6 +6,7 @@ export class LoginPage {
     private readonly passwordInput: Locator;
     private readonly loginButton: Locator;
     private readonly errorMessage: Locator;
+    private readonly invalidCredentialError: Locator;
     private readonly forgotPasswordLink: Locator;
 
     constructor(page: Page) {
@@ -19,12 +20,13 @@ export class LoginPage {
         this.loginButton = page.locator('button[type="submit"]');
         this.errorMessage = page.locator('.oxd-input-field-error-message');
         this.forgotPasswordLink = page.locator('.orangehrm-login-forgot-header');
+        this.invalidCredentialError = page.locator('.oxd-text.oxd-text--p.oxd-alert-content-text');
     }
 
     // Navigate to the login page
     // Assert to make sure we are in the correct page.
     async navigate() {
-        await this.page.goto('/');
+        await this.page.goto('/', { waitUntil: 'networkidle' });
         await expect(this.page).toHaveURL('https://opensource-demo.orangehrmlive.com/web/index.php/auth/login');
     }
 
@@ -40,9 +42,14 @@ export class LoginPage {
         await this.passwordInput.clear();
     }
 
-    async assertErrorMessage(expectedMessage: string) {
-        await expect(this.errorMessage).toBeVisible();
-        await expect(this.errorMessage).toContainText(expectedMessage);
+    async assertInvalidCredentialMessage(expectedMessage: string) {
+        await expect(this.invalidCredentialError).toBeVisible();
+        await expect(this.invalidCredentialError).toContainText(expectedMessage);
+    }
+
+    async assertInputErrorMessage(expectedMessage: string) {
+        await expect(this.errorMessage.nth(0)).toBeVisible();
+        await expect(this.errorMessage.nth(0)).toContainText(expectedMessage);
     }
 
     async assertPasswordMasked() {
