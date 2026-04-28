@@ -6,6 +6,7 @@ export class LoginPage {
     private readonly passwordInput: Locator;
     private readonly loginButton: Locator;
     private readonly errorMessage: Locator;
+    private readonly forgotPasswordLink: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -17,6 +18,7 @@ export class LoginPage {
         this.passwordInput = page.locator('input[name="password"]');
         this.loginButton = page.locator('button[type="submit"]');
         this.errorMessage = page.locator('.oxd-input-field-error-message');
+        this.forgotPasswordLink = page.locator('.orangehrm-login-forgot-header');
     }
 
     // Navigate to the login page
@@ -46,5 +48,9 @@ export class LoginPage {
     async assertPasswordMasked() {
         const type = await this.passwordInput.getAttribute('type');
         expect(type).toBe('password');
+    }
+
+    async assertForgotPasswordLink() {
+        await this.forgotPasswordLink.click();
     }
 }
