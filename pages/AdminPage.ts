@@ -63,4 +63,11 @@ export class AdminPage {
 
         expect(countNumber).toBe(rowCount);
     }
+
+    async assertAddUserButton() {
+        await this.addButton.click();
+        await expect(this.page).toHaveURL(
+            'https://opensource-demo.orangehrmlive.com/web/index.php/admin/saveSystemUser',
+        );
+    }
 }
