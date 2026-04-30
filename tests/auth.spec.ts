@@ -50,6 +50,19 @@ test.describe('Authentication (Login)', () => {
         await loginPage.assertPasswordMasked();
     });
 
+    test.describe('Logout Workflow', () => {
+        test.use({ storageState: { cookies: [], origins: [] } });
+
+        test('Logout should redirect to login page', async ({ loginPage, dashboardPage, page }) => {
+            await loginPage.navigate();
+            await loginPage.login('Admin', 'admin123');
+
+            // 3. Now logout won't affect any other test
+            await dashboardPage.logout();
+            await expect(page).toHaveURL(/.*\/login/);
+        });
+    });
+
     test('Forgot password link is clickable', async ({ loginPage, page }) => {
         await loginPage.assertForgotPasswordLink();
         await expect(page).toHaveURL(/.*requestPasswordResetCode/);
