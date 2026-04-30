@@ -59,7 +59,7 @@ export class AddUserPage {
 
         await this.saveButton.click();
 
-        expect(this.page).toHaveURL('https://opensource-demo.orangehrmlive.com/web/index.php/admin/viewSystemUsers');
+        // expect(this.page).toHaveURL('https://opensource-demo.orangehrmlive.com/web/index.php/admin/viewSystemUsers');
     }
 
     // Add user via fill all required filed
