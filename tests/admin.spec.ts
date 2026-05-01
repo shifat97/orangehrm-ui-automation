@@ -6,9 +6,11 @@ test.describe('Admin page feat', () => {
         await adminPage.navigate();
     });
 
-    test('Clicking add button moves to add user page', async ({ adminPage }) => {
+    test('Clicking add button -> Moves to add user page', async ({ adminPage }) => {
         adminPage.assertAddUserButton();
     });
+
+    test('Check all rows select button -> Should select all rows from table', async ({ adminPage }) => {});
 
     test('Username + UserRole + EmployerName + Status -> Not saved to db', async ({ adminPage }) => {
         await adminPage.searchWithFilters('admin', 'Admin', 'john', 'Enabled');
@@ -26,8 +28,19 @@ test.describe('Admin page feat', () => {
         await adminPage.searchWithFilters(username, 'Admin', 'amelia', 'Enabled');
 
         const count = await adminPage.countTableRows();
-
         expect(count).toBeGreaterThan(0);
+    });
+
+    test('Check all rows and Uncheck -> Uncheck all rows', async ({ adminPage }) => {
+        await adminPage.checkSelectRowsAndRemoveSelection();
+    });
+
+    test('Check all rows + Press Modal Cancel Button -> Close Modal', async ({ adminPage }) => {
+        await adminPage.checkSelectRowsAndCancelModal();
+    });
+
+    test('Check all rows + Press Modal Delete Button -> Delete All Rows', async ({ adminPage }) => {
+        await adminPage.checkSelectRowsAndCancelModal();
     });
 });
 

@@ -11,7 +11,11 @@ export class AdminPage {
     private readonly noUserFound;
     private readonly addButton;
     private readonly tableRows;
-    private readonly invalidInputError;
+    private readonly selectAllRowsCheckbox;
+    private readonly deleteSelectedButton;
+    private readonly deleteModal;
+    private readonly deleteModalCancelButton;
+    private readonly deleteModalDeleteButton;
 
     constructor(page: Page) {
         this.page = page;
@@ -28,7 +32,11 @@ export class AdminPage {
         this.noUserFound = page.locator('span:has-text("No Records Found")');
         this.addButton = page.getByRole('button', { name: 'Add' });
         this.tableRows = page.locator("div[class='oxd-table-card'] div[role='row']");
-        this.invalidInputError = page.locator('');
+        this.selectAllRowsCheckbox = page.locator("div[role='columnheader']").locator('span.oxd-checkbox-input');
+        this.deleteSelectedButton = page.getByRole('button', { name: 'Delete Selected' });
+        this.deleteModal = page.locator("div[role='document']");
+        this.deleteModalCancelButton = page.getByRole('button', { name: 'No, Cancel' });
+        this.deleteModalDeleteButton = page.getByRole('button', { name: 'Yes, Delete' });
     }
 
     async navigate() {
@@ -44,7 +52,7 @@ export class AdminPage {
     }
 
     // Fill all or partial information for search
-    async searchWithFilters(username: string, userRole: string, employerName: string, status: string) {
+    async searchWithFilters(username?: string, userRole?: string, employerName?: string, status?: string) {
         await this.userNameInput.fill(username ?? '');
 
         await this.userRoleInput.click();
@@ -57,14 +65,44 @@ export class AdminPage {
         await this.page.getByRole('option', { name: status }).click();
 
         await this.searchButton.click();
+    }
 
-        // const countText = await this.tableHeaderText.innerText();
-        // const extractCountText = countText.split(' ')[0].replace('(', '').replace(')', '');
-        // const countNumber = parseInt(extractCountText, 10);
+    async checkSelectRowsAndRemoveSelection() {
+        await expect(this.selectAllRowsCheckbox).toBeVisible();
+        await this.selectAllRowsCheckbox.click({ force: true });
+        await expect(this.deleteSelectedButton).toBeVisible();
+        await this.selectAllRowsCheckbox.click({ force: true });
+        await expect(this.deleteSelectedButton).not.toBeVisible();
+    }
 
-        // const rowCount = await this.countTableRows();
+    async checkSelectRowsAndCancelModal() {
+        await expect(this.selectAllRowsCheckbox).toBeVisible();
 
-        // expect(countNumber).toBe(rowCount);
+        await this.selectAllRowsCheckbox.click({ force: true });
+
+        await expect(this.deleteSelectedButton).toBeVisible();
+        await this.deleteSelectedButton.click();
+
+        await expect(this.deleteModal).toBeVisible();
+        await this.deleteModalCancelButton.click();
+
+        await expect(this.deleteModal).not.toBeVisible();
+    }
+
+    async checkSelectRowsAndDelete() {
+        await expect(this.selectAllRowsCheckbox).toBeVisible();
+
+        await this.selectAllRowsCheckbox.click({ force: true });
+
+        await expect(this.deleteSelectedButton).toBeVisible();
+        await this.deleteSelectedButton.click();
+
+        await expect(this.deleteModal).toBeVisible();
+        await this.deleteModalDeleteButton.click();
+
+        await expect(this.deleteModal).not.toBeVisible();
+
+        expect(this.countTableRows()).toBe(1);
     }
 
     async assertNoRecordFoundText() {
