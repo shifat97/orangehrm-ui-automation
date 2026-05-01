@@ -2,6 +2,7 @@ import { Page, Locator, expect } from '@playwright/test';
 
 export class LoginPage {
     private readonly page: Page;
+    private readonly loginTitle: Locator;
     private readonly usernameInput: Locator;
     private readonly passwordInput: Locator;
     private readonly loginButton: Locator;
@@ -21,6 +22,7 @@ export class LoginPage {
         this.errorMessage = page.locator('.oxd-input-field-error-message');
         this.forgotPasswordLink = page.locator('.orangehrm-login-forgot-header');
         this.invalidCredentialError = page.locator('.oxd-text.oxd-text--p.oxd-alert-content-text');
+        this.loginTitle = page.getByRole('heading', { name: 'Login' });
     }
 
     // Navigate to the login page
@@ -28,6 +30,7 @@ export class LoginPage {
     async navigate() {
         await this.page.goto('/', { waitUntil: 'networkidle' });
         await expect(this.page).toHaveURL('https://opensource-demo.orangehrmlive.com/web/index.php/auth/login');
+        await expect(this.loginTitle).toBeVisible();
     }
 
     // Login function
