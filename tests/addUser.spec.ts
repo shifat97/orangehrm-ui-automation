@@ -19,7 +19,7 @@ test.describe('Add user through form', () => {
     });
 
     test('Adding user keeping all field empty', async ({ addUserPage }) => {
-        await addUserPage.addUserWithoutFillingForm('-- Select --', '-- Select --', '', '');
+        await addUserPage.addUserWithoutFillingForm('-- Select --', '-- Select --', '', '', '');
     });
 
     test('Adding user changing confirm password', async ({ addUserPage }) => {
@@ -28,7 +28,21 @@ test.describe('Add user through form', () => {
             testData.addUser.essUser.status,
             testData.addUser.essUser.username,
             testData.addUser.adminUser.password,
-            '',
+            'John',
         );
+    });
+
+    test('Try adding user with same username', async ({ addUserPage }) => {
+        await addUserPage.addUserWithSameUsername(
+            testData.addUser.existedUser.userRole,
+            testData.addUser.existedUser.status,
+            testData.addUser.existedUser.username,
+            testData.addUser.existedUser.password,
+            'John',
+        );
+    });
+
+    test('Pressing cancel button should move to admin page', async ({ addUserPage }) => {
+        await addUserPage.assertCancelButton();
     });
 });
