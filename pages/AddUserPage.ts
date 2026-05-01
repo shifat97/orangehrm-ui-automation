@@ -16,9 +16,13 @@ export class AddUserPage {
 
     constructor(page: Page) {
         this.page = page;
-        this.userRoleInput = page.locator('i.oxd-icon.bi-caret-down-fill.oxd-select-text--arrow').first();
+        this.userRoleInput = page.locator(
+            'body > div:nth-child(3) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > form:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1)',
+        );
         this.employerName = page.locator("input[placeholder='Type for hints...']");
-        this.statusInput = page.locator('i.oxd-icon.bi-caret-down-fill.oxd-select-text--arrow').last();
+        this.statusInput = page.locator(
+            'body > div:nth-child(3) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > form:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1)',
+        );
         this.usernameInput = page.locator(
             "div[class='oxd-form-row'] div[class='oxd-grid-2 orangehrm-full-width-grid'] div[class='oxd-grid-item oxd-grid-item--gutters'] div[class='oxd-input-group oxd-input-field-bottom-space'] div input[class='oxd-input oxd-input--active']",
         );
