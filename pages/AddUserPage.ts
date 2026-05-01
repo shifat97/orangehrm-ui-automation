@@ -54,7 +54,7 @@ export class AddUserPage {
         await this.statusInput.click();
         await this.page.getByRole('option', { name: status }).click();
 
-        await this.usernameInput.fill(`${username}${Math.floor(Math.random() * 10000000)}`);
+        await this.usernameInput.fill(username);
         await this.passwordInput.fill(password);
         await this.confirmPasswordInput.fill(password);
 
