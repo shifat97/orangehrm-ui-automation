@@ -14,7 +14,9 @@ test.describe('Admin page feat', () => {
         await adminPage.checkSelectRowsAndRemoveSelection();
     });
 
-    test('Check all rows + Press Modal Cancel Button -> Close Modal', async ({ adminPage }) => {
+    test('Check all rows + Press Modal Cancel Button -> Close Modal', async ({ adminPage, addUserPage }) => {
+        // Add a user before search
+        await addUserPage.addUser('Admin', 'Enabled', faker.internet.username(), 'am12345678', 'no akhil 1');
         await adminPage.checkSelectRowsAndCancelModal();
     });
 
@@ -22,8 +24,16 @@ test.describe('Admin page feat', () => {
         await adminPage.checkSelectRowsAndDelete();
     });
 
-    test('Username + UserRole + EmployerName + Status -> Not saved to db', async ({ adminPage }) => {
-        await adminPage.searchWithFilters('admin', 'Admin', 'john', 'Enabled');
+    test('Check username sorting -> Ascending order', async ({ adminPage }) => {
+        await adminPage.checkUsernameAfterSorting('Ascending');
+    });
+
+    test('Check username sorting -> Descending order', async ({ adminPage }) => {
+        await adminPage.checkUsernameAfterSorting('Descending');
+    });
+
+    test('Search user -> Not saved to db', async ({ adminPage }) => {
+        await adminPage.searchWithFilters(faker.internet.username());
         await adminPage.assertNoRecordFoundText();
     });
 
@@ -33,7 +43,7 @@ test.describe('Admin page feat', () => {
         await adminPage.assertAddUserButton();
 
         // Add a user before search
-        await addUserPage.addUser('Admin', 'Enabled', username, 'am12345678', 'amelia');
+        await addUserPage.addUser('Admin', 'Enabled', username, 'am12345678', 'a');
 
         await adminPage.assertHeadingText();
         await adminPage.searchWithFilters(username, '', '', '');

@@ -17,6 +17,9 @@ export class AdminPage {
     private readonly deleteModal: Locator;
     private readonly deleteModalCancelButton: Locator;
     private readonly deleteModalDeleteButton: Locator;
+    private readonly usernameSortingButton: Locator;
+    private readonly employerNameSortingButton: Locator;
+    private readonly userNameFromTable: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -34,11 +37,23 @@ export class AdminPage {
         this.noUserFound = page.locator('span:has-text("No Records Found")');
         this.addButton = page.getByRole('button', { name: 'Add' });
         this.tableRows = page.locator("div[class='oxd-table-card'] div[role='row']");
-        this.selectAllRowsCheckbox = page.locator("div[role='columnheader']").locator('span.oxd-checkbox-input');
+        this.selectAllRowsCheckbox = page
+            .locator("div[role='columnheader']")
+            .locator('span.oxd-checkbox-input')
+            .first();
         this.deleteSelectedButton = page.getByRole('button', { name: 'Delete Selected' });
         this.deleteModal = page.locator("div[role='document']");
         this.deleteModalCancelButton = page.getByRole('button', { name: 'No, Cancel' });
         this.deleteModalDeleteButton = page.getByRole('button', { name: 'Yes, Delete' });
+        this.usernameSortingButton = page
+            .locator('.oxd-table-header-sort')
+            .locator('i.oxd-icon.bi-sort-alpha-down.oxd-icon-button__icon.oxd-table-header-sort-icon')
+            .nth(0);
+        this.employerNameSortingButton = page
+            .locator('.oxd-table-header-sort')
+            .locator('i.oxd-icon.bi-sort-alpha-down.oxd-icon-button__icon.oxd-table-header-sort-icon')
+            .nth(2);
+        this.userNameFromTable = page.locator('.oxd-table-row .oxd-table-cell:nth-child(2) div');
     }
 
     async navigate() {
@@ -79,16 +94,16 @@ export class AdminPage {
 
     async checkSelectRowsAndRemoveSelection() {
         await expect(this.selectAllRowsCheckbox).toBeVisible();
-        await this.selectAllRowsCheckbox.click({ force: true });
+        await this.selectAllRowsCheckbox.click();
         await expect(this.deleteSelectedButton).toBeVisible();
-        await this.selectAllRowsCheckbox.click({ force: true });
+        await this.selectAllRowsCheckbox.click();
         await expect(this.deleteSelectedButton).not.toBeVisible();
     }
 
     async checkSelectRowsAndCancelModal() {
         await expect(this.selectAllRowsCheckbox).toBeVisible();
 
-        await this.selectAllRowsCheckbox.click({ force: true });
+        await this.selectAllRowsCheckbox.click();
 
         await expect(this.deleteSelectedButton).toBeVisible();
         await this.deleteSelectedButton.click();
@@ -102,7 +117,7 @@ export class AdminPage {
     async checkSelectRowsAndDelete() {
         await expect(this.selectAllRowsCheckbox).toBeVisible();
 
-        await this.selectAllRowsCheckbox.click({ force: true });
+        await this.selectAllRowsCheckbox.click();
 
         await expect(this.deleteSelectedButton).toBeVisible();
         await this.deleteSelectedButton.click();
@@ -113,6 +128,32 @@ export class AdminPage {
         await expect(this.deleteModal).not.toBeVisible();
 
         expect(await this.countTableRows()).toBe(1);
+    }
+
+    async checkUsernameAfterSorting(sortingText: string) {
+        await this.usernameSortingButton.click();
+
+        let usernames, normalize, ascSorted, dscSorted;
+
+        if (sortingText == 'Ascending') {
+            await this.page.locator('ul[role="menu"] li.oxd-table-header-sort-dropdown-item').nth(0).click();
+        } else {
+            await this.page.locator('ul[role="menu"] li.oxd-table-header-sort-dropdown-item').nth(1).click();
+        }
+
+        await expect(this.userNameFromTable.first()).toBeVisible();
+
+        usernames = await this.userNameFromTable.allTextContents();
+        normalize = usernames.map((n) => n.trim());
+        // Ascending sort
+        ascSorted = [...normalize].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+
+        if (sortingText == 'Ascending') {
+            expect(ascSorted).toEqual(normalize);
+        } else {
+            dscSorted = [...ascSorted].reverse();
+            expect(dscSorted).toEqual(normalize);
+        }
     }
 
     async assertHeadingText() {
