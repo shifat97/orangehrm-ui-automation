@@ -36,7 +36,7 @@ test.describe('Add user through form', () => {
         await addUserPage.addUserWithSameUsername(
             testData.addUser.existedUser.userRole,
             testData.addUser.existedUser.status,
-            testData.addUser.existedUser.username,
+            'Admin',
             testData.addUser.existedUser.password,
             'John',
         );

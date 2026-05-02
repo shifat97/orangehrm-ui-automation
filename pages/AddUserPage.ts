@@ -144,7 +144,7 @@ export class AddUserPage {
         await this.usernameInput.fill(username);
 
         await this.passwordInput.fill(password);
-        await this.confirmPasswordInput.fill(`${password}123`);
+        await this.confirmPasswordInput.fill(password);
 
         // await this.saveButton.click();
 
