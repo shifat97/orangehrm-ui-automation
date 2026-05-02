@@ -14,7 +14,7 @@ test.describe('Add user through form', () => {
             testData.addUser.adminUser.status,
             testData.addUser.adminUser.username,
             testData.addUser.adminUser.password,
-            'John',
+            testData.addUser.adminUser.employerName,
         );
     });
 

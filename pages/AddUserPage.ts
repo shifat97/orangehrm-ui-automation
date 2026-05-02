@@ -136,6 +136,7 @@ export class AddUserPage {
         await this.page.getByRole('option', { name: userRole }).click();
 
         await this.employerName.fill(employerName ?? 'John  Maggio');
+        await this.page.getByRole('option').filter({ hasText: employerName }).first().click();
 
         await this.statusInput.click();
         await this.page.getByRole('option', { name: status }).click();
