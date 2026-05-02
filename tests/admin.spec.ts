@@ -10,8 +10,6 @@ test.describe('Admin page feat', () => {
         adminPage.assertAddUserButton();
     });
 
-    test('Check all rows select button -> Should select all rows from table', async ({ adminPage }) => {});
-
     test('Username + UserRole + EmployerName + Status -> Not saved to db', async ({ adminPage }) => {
         await adminPage.searchWithFilters('admin', 'Admin', 'john', 'Enabled');
         await adminPage.assertNoRecordFoundText();
@@ -40,7 +38,7 @@ test.describe('Admin page feat', () => {
     });
 
     test('Check all rows + Press Modal Delete Button -> Delete All Rows', async ({ adminPage }) => {
-        await adminPage.checkSelectRowsAndCancelModal();
+        await adminPage.checkSelectRowsAndDelete();
     });
 });
 

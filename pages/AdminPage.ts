@@ -102,7 +102,7 @@ export class AdminPage {
 
         await expect(this.deleteModal).not.toBeVisible();
 
-        expect(this.countTableRows()).toBe(1);
+        expect(await this.countTableRows()).toBe(0);
     }
 
     async assertNoRecordFoundText() {
