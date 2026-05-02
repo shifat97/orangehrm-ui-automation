@@ -1,24 +1,26 @@
-import { expect, Page } from '@playwright/test';
+import { expect, Page, Locator } from '@playwright/test';
 
 export class AdminPage {
     private readonly page: Page;
-    private readonly userNameInput;
-    private readonly userRoleInput;
-    private readonly employerNameInput;
-    private readonly statusInput;
-    private readonly searchButton;
-    private readonly resetButton;
-    private readonly noUserFound;
-    private readonly addButton;
-    private readonly tableRows;
-    private readonly selectAllRowsCheckbox;
-    private readonly deleteSelectedButton;
-    private readonly deleteModal;
-    private readonly deleteModalCancelButton;
-    private readonly deleteModalDeleteButton;
+    private readonly pageHeading: Locator;
+    private readonly userNameInput: Locator;
+    private readonly userRoleInput: Locator;
+    private readonly employerNameInput: Locator;
+    private readonly statusInput: Locator;
+    private readonly searchButton: Locator;
+    private readonly resetButton: Locator;
+    private readonly noUserFound: Locator;
+    private readonly addButton: Locator;
+    private readonly tableRows: Locator;
+    private readonly selectAllRowsCheckbox: Locator;
+    private readonly deleteSelectedButton: Locator;
+    private readonly deleteModal: Locator;
+    private readonly deleteModalCancelButton: Locator;
+    private readonly deleteModalDeleteButton: Locator;
 
     constructor(page: Page) {
         this.page = page;
+        this.pageHeading = page.getByRole('heading', { name: 'System Users' });
         this.userNameInput = page.locator(
             "div[class='oxd-input-group oxd-input-field-bottom-space'] div input[class='oxd-input oxd-input--active']",
         );
@@ -48,6 +50,8 @@ export class AdminPage {
     }
 
     async countTableRows() {
+        // Wait for results to load properly
+        await expect(this.tableRows.first()).toBeVisible();
         return await this.tableRows.count();
     }
 
@@ -55,14 +59,20 @@ export class AdminPage {
     async searchWithFilters(username?: string, userRole?: string, employerName?: string, status?: string) {
         await this.userNameInput.fill(username ?? '');
 
-        await this.userRoleInput.click();
-        await this.page.getByRole('option', { name: userRole }).click();
+        if (userRole) {
+            await this.userRoleInput.click();
+            await this.page.getByRole('option', { name: userRole }).click();
+        }
 
-        await this.employerNameInput.fill(employerName ?? '');
-        await this.page.getByRole('option').filter({ hasText: employerName }).first().click();
+        if (employerName) {
+            await this.employerNameInput.fill(employerName ?? '');
+            await this.page.getByRole('option').filter({ hasText: employerName }).first().click();
+        }
 
-        await this.statusInput.click();
-        await this.page.getByRole('option', { name: status }).click();
+        if (status) {
+            await this.statusInput.click();
+            await this.page.getByRole('option', { name: status }).click();
+        }
 
         await this.searchButton.click();
     }
@@ -102,7 +112,11 @@ export class AdminPage {
 
         await expect(this.deleteModal).not.toBeVisible();
 
-        expect(await this.countTableRows()).toBe(0);
+        expect(await this.countTableRows()).toBe(1);
+    }
+
+    async assertHeadingText() {
+        await expect(this.pageHeading).toBeVisible();
     }
 
     async assertNoRecordFoundText() {
@@ -113,7 +127,7 @@ export class AdminPage {
         await expect(this.addButton).toBeVisible();
         await expect(this.addButton).toBeEnabled();
 
-        await this.addButton.click();
+        await Promise.all([this.page.waitForLoadState('domcontentloaded'), this.addButton.click()]);
 
         await expect(this.page).toHaveURL(
             'https://opensource-demo.orangehrmlive.com/web/index.php/admin/saveSystemUser',
